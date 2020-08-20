@@ -10,16 +10,21 @@
 package main
 
 import (
+	sw "go-server-server-generated/go"
 	"log"
 	"net/http"
-
-	//sw "github.com/nikvkov/disclosure-stub-server/go"
-	sw "go-server-server-generated/go"
 )
 
 func main() {
-	log.Printf("Hello from Disclosure Hub Api Stub")
+	log.Printf("Hello from Disclosure Hub Api Stub v1.02")
 	log.Printf("Server started")
+	log.Println(`In new version added such endpoints:
+				/token
+				/disclosureRequests
+				/fileUploadToken
+				/uploadDisclosureResponse
+				/fileProcessingStatus
+`)
 
 	router := sw.NewRouter()
 

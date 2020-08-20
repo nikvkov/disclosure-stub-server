@@ -1,0 +1,145 @@
+{
+  "status": true,
+  "requests": [
+    {
+      "requestId": "4c582ed0eb3c01cb671000014d93738f",
+      "requestDetails": {
+        "disclosureRequestType": "NEWM",
+        "disclosureResponseRecipient": {
+          "identification": {
+            "lei": "7H6GLXDRUGQFU57RNE91"
+          },
+          "recipientName": "Issuer Agent 1",
+          "responseRecipientAddress": {
+            "anyBIC": "TESTANYBIC",
+            "emailAddress": "xyz@email.com",
+            "postalAddress": {
+              "addressLine": [
+                "Address LIne1",
+                "Address LIne2"
+              ],
+              "addressType": "BIZZ",
+              "buildingNumber": "124",
+              "country": "UK",
+              "countrySubDivision": "Munich",
+              "postBox": "P.O. Box 59",
+              "postCode": "12375",
+              "streetName": "Destiny Vista",
+              "townName": "Pagacton"
+            }
+          }
+        },
+        "issuer": {
+          "lei": "7H6GLXDRUGQFU57RNE91"
+        },
+        "financialInstrumentIdentification": {
+          "isin": "DE000BAY0017"
+        },
+        "forwardRequestIndicator": "Yes",
+        "issuerDisclosureDeadline": {
+          "date": {
+            "date": "2020-04-30"
+          }
+        },
+        "issuerDisclosureRequestIdentification": "TESTBAY01",
+        "requestShareHeldDate": {
+          "dateCalculationMethod": "LIFO"
+        },
+        "responseThroughChainIndicator": "No",
+        "shareholdersDisclosureRecordDate": {
+          "date": {
+            "date": "2020-04-08"
+          }
+        },
+        "sharesQuantityThreshold": 1000,
+        "isinMarketCode": "DE"
+      },
+      "metadata": {
+        "status": "OPEN",
+        "sender": {
+          "anyBIC": "DAKVDEFF701"
+        },
+        "requestMode": {
+          "platform": "PLATFORM",
+          "referenceId": "4c582ed0eb3c01cb671000014d93738f"
+        },
+        "forwardDeadlineDate": "2020-04-07T19:00:00+01:00",
+        "responseDeadlineDate": "2020-04-10T19:00:00+01:00",
+        "requestOriginTimestamp": "2020-04-07T11:53:20Z",
+        "requestReceiptTimestamp": "2020-04-07T11:55:49Z"
+      }
+    },
+    {
+      "requestId": "1b0f46a3e5111c631a280001076c80e2",
+      "requestDetails": {
+        "disclosureRequestType": "NEWM",
+        "disclosureResponseRecipient": {
+          "identification": {
+            "lei": "7H6GLXDRUGQFU57RNE91"
+          },
+          "recipientName": "Issuer Agent 1",
+          "responseRecipientAddress": {
+            "postalAddress": {
+              "addressLine": [],
+              "addressType": "BIZZ",
+              "buildingNumber": "124",
+              "country": "UK",
+              "countrySubDivision": "Munich",
+              "postBox": "P.O. Box 59",
+              "postCode": "12375",
+              "streetName": "Destiny Vista",
+              "townName": "Pagacton"
+            }
+          }
+        },
+        "financialInstrumentIdentification": {
+          "isin": "DE000BAY0017"
+        },
+        "forwardRequestIndicator": "Yes",
+        "issuer": {
+          "nameAndAddress": {
+            "address": {
+              "addressLine": [],
+              "addressType": "BIZZ",
+              "buildingNumber": "124",
+              "country": "UK",
+              "countrySubDivision": "Munich",
+              "postBox": "P.O. Box 59",
+              "postCode": "12375",
+              "streetName": "Destiny Vista",
+              "townName": "Pagacton"
+            },
+            "name": "Issuer Agent 1"
+          }
+        },
+        "issuerDisclosureDeadline": {
+          "date": {
+            "date": "2020-04-22"
+          }
+        },
+        "issuerDisclosureRequestIdentification": "TESTTEST",
+        "responseThroughChainIndicator": "No",
+        "shareholdersDisclosureRecordDate": {
+          "date": {
+            "date": "2020-04-08"
+          }
+        },
+        "isinMarketCode": "DE"
+      },
+      "metadata": {
+        "status": "OPEN",
+        "sender": {
+          "anyBIC": "DAKVDEFF701"
+        },
+        "requestMode": {
+          "platform": "PLATFORM",
+          "referenceId": "1b0f46a3e5111c631a280001076c80e2"
+        },
+        "forwardDeadlineDate": "2020-04-07T19:00:00+01:00",
+        "responseDeadlineDate": "2020-04-10T19:00:00+01:00",
+        "requestOriginTimestamp": "2020-04-07T11:42:15Z",
+        "requestReceiptTimestamp": "2020-04-07T11:54:33Z"
+      }
+    }
+  ]
+}

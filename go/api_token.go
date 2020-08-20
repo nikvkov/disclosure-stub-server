@@ -17,6 +17,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/nikvkov/disclosure-stub-server/token"
 )
 
 func TokenPost(w http.ResponseWriter, r *http.Request) {
@@ -48,19 +50,9 @@ func TokenPost(w http.ResponseWriter, r *http.Request) {
 		w.Write(a)
 		return
 	}
-	//b := Body{
-	//	Email: "user1@sc1.com",
-	//	Password: "password",
-	//}
+
 	// Create the Claims
-	//var claims = &jwt.StandardClaims{
-	//	ExpiresAt: jwt.At(time.Now().Add(time.Hour*4)),
-	//	IssuedAt:    jwt.At(time.Now()),
-	//}
-	//token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	//ss, err := token.SignedString(b.Email)
-	// Create the Claims
-	mySigningKey := []byte(b.Email)
+	mySigningKey := []byte(token.SECRET)
 
 	// Create the Claims
 	claims := &jwt.StandardClaims{

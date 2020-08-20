@@ -10,20 +10,315 @@
 package swagger
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/nikvkov/disclosure-stub-server/token"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"strings"
+	"time"
 )
+
+// Size constants
+const (
+	MB = 1 << 20
+)
+
+type Sizer interface {
+	Size() int64
+}
 
 func FileProcessingStatusPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	err := verifyBearer(w, r)
+	if err != nil {
+		return
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		write500(w)
+		return
+	}
+	data := Body3{}
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		write500(w)
+		return
+	}
+
+	inline := InlineResponse2001{}
+	buff := make([]byte, 0)
+	if data.DisclosureResponseIdentification == "4c582ed0eb3c01cb671000014d93738f" {
+		buff, err = ioutil.ReadFile("json/fileProcessingStatusValid.json")
+	} else if data.DisclosureResponseIdentification == "4c582ed0eb3c01cb671000014d85412g" {
+		buff, err = ioutil.ReadFile("json/fileProcessingStatusInValid.json")
+	} else {
+		write404(w)
+		return
+	}
+
+	json.Unmarshal(buff, &inline)
+	res, _ := json.Marshal(&inline)
+	log.Println(string(res))
 	w.WriteHeader(http.StatusOK)
+	w.Write(res)
 }
 
 func FileUploadTokenPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	err := verifyBearer(w, r)
+	if err != nil {
+		return
+	}
+	body, err := ioutil.ReadAll(r.Body)
+	log.Println(string(body))
+	if err != nil {
+		write500(w)
+		return
+	}
+
+	b := Body1{}
+	err = json.Unmarshal(body, &b)
+	if b.Checksum == "" {
+		write400(w, "Missing checksum value in the request")
+		return
+	}
+	if b.Checksum != "7be8db115ad78de0d8eadf0101de51dc" {
+		write400(w, "Invalid checksum")
+		return
+	}
+	if b.Filename == "" {
+		write400(w, "Missing filename value in the request")
+		return
+	}
+	if b.Filename != "000039611a45bf75e10b0000d8f95248_20200407231655.json" {
+		write400(w, "Invalid filename")
+		return
+	}
+
+	write201(w)
 }
 
 func UploadDisclosureResponsePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	err := verifyBearer(w, r)
+	if err != nil {
+		return
+	}
+
+	saveFile(w, r)
+}
+
+func verifyBearer(w http.ResponseWriter, r *http.Request) error {
+	if r.Header.Get("Authorization") == "" {
+		write500(w)
+		return errors.New("functionThatRepo")
+	}
+	exist, valid := token.VerifyToken(r)
+	if !exist && !valid {
+		write401(w)
+		return errors.New("functionThatRepo")
+	}
+	if exist && !valid {
+		write422(w)
+		return errors.New("functionThatRepo")
+	}
+	return nil
+}
+
+func write201(w http.ResponseWriter) {
+	t, err := token.GenerateToken()
+	if err != nil {
+		write500(w)
+		return
+	}
+
+	inline := InlineResponse2011{
+		TokenType: "X-CSRFToken",
+		ExpiresIn: "7200",
+		ExpiresOn: fmt.Sprintf("%d", time.Now().Add(time.Hour*4).Unix()),
+		CsrfToken: t,
+	}
+	w.WriteHeader(http.StatusCreated)
+	a, _ := json.Marshal(inline)
+	w.Write(a)
+}
+
+func write400(w http.ResponseWriter, d string) {
+	w.WriteHeader(http.StatusBadRequest)
+	er1 := InlineResponse4011{Status: false, Description: d}
+	a, _ := json.Marshal(er1)
+	w.Write(a)
+}
+
+func saveFile(w http.ResponseWriter, r *http.Request) error {
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	body := string(b)
+	start := strings.Index(body, "{")
+	end := strings.LastIndex(body, "}")
+	if len(body) == 0 {
+		body = ""
+	}
+	js := ""
+	if start == -1 || end == -1 {
+		js = ""
+	} else {
+		js = body[start:end]
+	}
+	js = strings.ReplaceAll(js, "\n", "")
+	js = strings.ReplaceAll(js, "\r", "")
+
+	dr := DisclosureResponse{}
+	if len(js) > 0 {
+		json.Unmarshal([]byte(js), &dr)
+		log.Println(dr)
+	}
+	head := ""
+	if start > -1 {
+		head = body[:start]
+	}
+	if r.Header.Get("Content-Disposition") != "" {
+		head = r.Header.Get("Content-Disposition")
+	}
+	headInd := strings.Index(head, "filename=")
+	head = head[headInd:]
+	head = strings.ReplaceAll(head, "Content-Type: application/json", "")
+	head = strings.ReplaceAll(head, "\n", "")
+	head = strings.ReplaceAll(head, "\r", "")
+	head = strings.ReplaceAll(head, "filename=", "")
+	head = strings.ReplaceAll(head, "\"", "")
+	log.Println(head)
+
+	// invalid checksum
+	if len(js) == 0 {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"Checksum validation failure",
+			head,
+			strings.Split(head, "_")[0])
+		return nil
+	}
+
+	// User is not authorized to submit a response
+	if !validXSRF(r.Header.Get("X-CSRFToken")) {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"Unauthorized to respond to this request",
+			head,
+			strings.Split(head, "_")[0])
+		return nil
+	}
+
+	// disclosureResponseIdentification value is either empty or undefined
+	if len(strings.Split(head, "_")[0]) < 5 {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"disclosureResponseIdentification element is either undefined or empty",
+			head,
+			strings.Split(head, "_")[0])
+		return nil
+	}
+
+	// Failed to parse the input i.e. JSON response
+	if strings.Contains(body, "{some json safekeepingAccountAndHoldings}") {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"Failed to parse the json",
+			head,
+			strings.Split(head, "_")[0])
+		return nil
+	}
+
+	// Schema validation – missing element
+	if !strings.Contains(string(js), "safekeepingAccountAndHoldings") {
+		write400Upload(w,
+			[]InlineResponse4001Errors{
+				{
+					Keyword:     "required",
+					DataPath:    "/disclosureInformation/safekeepingAccountAndHoldings/0",
+					Description: "should have required property 'safekeepingAccount'",
+				},
+			},
+
+			"Response is invalid and the file is rejected. Resend the response after fixing the errors",
+			head,
+			strings.Split(head, "_")[0])
+		return nil
+	}
+
+	// New response uploaded when an existing response is still processing
+	if strings.Split(head, "_")[0] == "0000131e51cd5a265d190000b3771a9a" {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"Cannot accept new response while the request status in PROCESSING",
+			head,
+			"41e1cd345ff944a5b064f2a329e1ffa0")
+		return nil
+	}
+
+	// Invalid disclosureResponseIdentification
+	if strings.Split(head, "_")[0] == "18ba52f24cae4513584ec04b4e51a5bd" {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"Disclosure request identification not found",
+			head,
+			"41e1cd345ff944a5b064f2a329e1ffa0")
+		return nil
+	}
+
+	// disclosureType is INTERMEDIARIES and no intermediary data found in the response
+	if strings.Split(head, "_")[0] == "56d13d69d4ae7866cf68fae7e8ec2dd0" {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"No Intermediaries found in the response",
+			head,
+			"000039611a45bf75e10b0000d8f9524")
+		return nil
+	}
+
+	// disclosureType RESPONSE filed before record date
+	if strings.Contains(strings.Split(head, "_")[1], "20200407231655") {
+		write400Upload(w,
+			make([]InlineResponse4001Errors, 0),
+			"Response is rejected as it is filed before record date",
+			head,
+			"000039611a45bf75e10b0000d8f9524")
+		return nil
+	}
+
+	inline := InlineResponse202{
+		Status:      true,
+		Filename:    head,
+		FileId:      strings.Split(head, "_")[0],
+		Description: "File is under processing",
+	}
+
+	mars, _ := json.Marshal(inline)
+	log.Println(string(mars))
+	w.WriteHeader(http.StatusAccepted)
+	w.Write(mars)
+	return nil
+}
+
+func validXSRF(token string) bool {
+	return token != ""
+}
+
+func write400Upload(w http.ResponseWriter, err []InlineResponse4001Errors, d, filename, fileId string) {
+	w.WriteHeader(http.StatusBadRequest)
+	log.Println(d)
+	er1 := InlineResponse4001{
+		Status:      false,
+		Description: d,
+		Filename:    filename,
+		FileId:      fileId,
+		Errors:      err,
+	}
+	a, _ := json.Marshal(er1)
+	w.Write(a)
 }
