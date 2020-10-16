@@ -1,0 +1,20 @@
+{
+  "status":true,
+  "disclosureResponseIdentification":"4c582ed0eb3c01cb671000014d93738f",
+  "result":[
+    {
+      "fileId":"473e485a2a59cf1bdef733c5daf02e77",
+      "fileProcessingStatus":"COMPLETED",
+      "filename":"000039611a45bf75e10b0000d8f95248_04072020231655.json",
+      "responseStatus":"VALID",
+      "description":"Response has been accepted and processed without any errors."
+    },
+    {
+      "fileId":"3afa9e49310ef64bf12b77a70548576d",
+      "fileProcessingStatus":"COMPLETED",
+      "filename":"000039611a45bf75e10b0000d8f95248_04072020231655.json",
+      "responseStatus":"VALID",
+      "description":"Response has been accepted and processed without any errors."
+    }
+  ]
+}

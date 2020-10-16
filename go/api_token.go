@@ -17,6 +17,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/nikvkov/disclosure-stub-server/token"
 )
 
 func TokenPost(w http.ResponseWriter, r *http.Request) {
@@ -48,25 +50,15 @@ func TokenPost(w http.ResponseWriter, r *http.Request) {
 		w.Write(a)
 		return
 	}
-	//b := Body{
-	//	Email: "user1@sc1.com",
-	//	Password: "password",
-	//}
+
 	// Create the Claims
-	//var claims = &jwt.StandardClaims{
-	//	ExpiresAt: jwt.At(time.Now().Add(time.Hour*4)),
-	//	IssuedAt:    jwt.At(time.Now()),
-	//}
-	//token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	//ss, err := token.SignedString(b.Email)
-	// Create the Claims
-	mySigningKey := []byte(b.Email)
+	mySigningKey := []byte(token.SECRET)
 
 	// Create the Claims
 	claims := &jwt.StandardClaims{
 		ExpiresAt: jwt.At(time.Now().Add(time.Hour * 4)),
 		Issuer:    b.Email,
-		IssuedAt:  jwt.At(time.Now()),
+		IssuedAt:  jwt.At(time.Now().Add(time.Hour * 4)),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
@@ -75,8 +67,8 @@ func TokenPost(w http.ResponseWriter, r *http.Request) {
 
 	inline := InlineResponse201{
 		TokenType:   "Bearer",
-		ExpiresIn:   fmt.Sprintf("%d", time.Now().Add(time.Hour*4).Unix()), //"25200",
-		ExpiresOn:   fmt.Sprintf("%d", claims.IssuedAt.Unix()),             //"1583450100559",
+		ExpiresIn:   fmt.Sprintf("%d" /*time.Now().Add(time.Hour*4).Unix()*/, 50400), //"25200",
+		ExpiresOn:   fmt.Sprintf("%d", time.Now().Add(time.Hour*8).Unix()),           //"1583450100559",
 		Resource:    "https://uat.stateexplorer.broadridge.com/srd_api",
 		AccessToken: ss, //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzT24iOjE1ODM0NTAxMDA1NTksImVtYWlsIjoidXNlcjFAc2MxLmNvbSIsIm1ldGEiOiJEcUE5Q3Rwdjg1RnVZa3B5TlM0RjAyMjdDVStRTUJpM25lekJwL0FtdVBtNGM3M1NFOWlQNC93bGFrZ2taSG1pWHg2cVgyNkk2RHczdTdmWDVRVGJIT1JtTVBtcUtZaGJRUGd5UHBxT2pzNHE0dEVyM1d2b1lxS0xEd3IwdkhTYmc1a3VkUHRXRno4ZTVWaWNkSTh6L08ydHFzYk9JTDc3NnFib2NzdnVneGN4ckg4Njg4akd2azVtaVhwbFY5UldIZlFlZEFmS3BxOWx5aEZuaWZOd3NQNU15aFIxRExKUGl2ZEtCRkJzY0pYWXRoUERsRGxvNExZOXRtdDVNTUVrckZIQUlFanhCUlBLbWhmYk9UNnowa3NyUnJnVGxRPT0iLCJ0b2tlbiI6IkF6bllnRG1zZjRVaFd3ZWFOZlRXZWRoTXlXSWpzSkd3VGlkd05hZmc2RUU9In0=.smRPmkC6TeZmUnwlrEjexEKHCehzS8qBC8mbIJOOJe0=",
 	}

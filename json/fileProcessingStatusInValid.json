@@ -1,0 +1,30 @@
+{
+  "status":true,
+  "disclosureResponseIdentification":"0000000039611a45bf75e10b0000d8f95248",
+  "result":[
+    {
+      "fileId":"7c327ad33617e75c709951e0339572bb",
+      "fileProcessingStatus":"COMPLETED",
+      "filename":"000039611a45bf75e10b0000d8f95248_04072020231655.json",
+      "responseStatus":"VALID_WITH_ERRORS",
+      "description":"Response contains errors which are acceptable. However, they must be corrected before the deadline. Otherwise, the response is filed with fillers.",
+      "errors":[
+        {
+          "keyword":"required",
+          "dataPath":"/disclosureInformation/safekeepingAccountAndHoldings/0/accountSubLevel/disclosure/0/accountHolder/natu ralPerson",
+          "message":"should have required property 'emailAddress'"
+        },
+        {
+          "keyword":"required",
+          "dataPath":"/disclosureInformation/safekeepingAccountAndHoldings/0/accountSubLevel/disclosure/1/accountHolder/natu ralPerson",
+          "message":"should have required property 'emailAddress'"
+        },
+        {
+          "keyword":"required",
+          "dataPath":"/disclosureInformation/safekeepingAccountAndHoldings/0/accountSubLevel/disclosure/2/accountHolder/natu ralPerson",
+          "message":"should have required property 'emailAddress'"
+        }
+      ]
+    }
+  ]
+}

@@ -10,10 +10,76 @@
 package swagger
 
 import (
+	"encoding/json"
+	"github.com/nikvkov/disclosure-stub-server/token"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"strings"
 )
 
 func DisclosureRequestsPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if r.Header.Get("Authorization") == "" {
+		write500(w)
+		return
+	}
+	exist, valid := token.VerifyToken(r)
+	if !exist && !valid {
+		write401(w)
+		return
+	}
+	if exist && !valid {
+		write422(w)
+		return
+	}
+
+	write200(w, r)
+}
+
+func write401(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusUnauthorized)
+	er1 := InlineResponse4011{Status: false, Description: "Invalid token authentication scheme"}
+	a, _ := json.Marshal(er1)
+	w.Write(a)
+}
+
+func write404(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusNotFound)
+	er1 := InlineResponse4011{Status: false, Description: "No result found for matching FileId/disclosureResponseIdentification"}
+	a, _ := json.Marshal(er1)
+	w.Write(a)
+}
+
+func write422(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusUnprocessableEntity)
+	er1 := InlineResponse422{Status: false, Description: "Malformed/Expired Token"}
+	a, _ := json.Marshal(er1)
+	w.Write(a)
+}
+
+func write500(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusInternalServerError)
+	er1 := InlineResponse500{Status: false, Description: "Internal Server Error"}
+	a, _ := json.Marshal(er1)
+	w.Write(a)
+}
+
+func write200(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
+	inline := InlineResponse200{Requests: make([]InlineResponse200Requests, 0)}
+	log.Println(r.Header)
+	if !strings.Contains(r.Header.Get("Pending"), "PENDING") {
+		log.Println("Open disclosure request")
+		data, err := ioutil.ReadFile("json/requests.json")
+		if err != nil {
+			log.Println(err)
+		}
+		err = json.Unmarshal(data, &inline)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	bytes, _ := json.Marshal(inline)
+	w.Write(bytes)
 }
