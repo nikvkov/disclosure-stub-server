@@ -194,102 +194,102 @@ func saveFile(w http.ResponseWriter, r *http.Request) error {
 	head = strings.ReplaceAll(head, "\"", "")
 	log.Println(head)
 
-	// invalid checksum
-	if len(js) == 0 {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"Checksum validation failure",
-			head,
-			strings.Split(head, "_")[0])
-		return nil
-	}
-
-	// User is not authorized to submit a response
-	if !validXSRF(r.Header.Get("X-CSRFToken")) {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"Unauthorized to respond to this request",
-			head,
-			strings.Split(head, "_")[0])
-		return nil
-	}
-
-	// disclosureResponseIdentification value is either empty or undefined
-	if len(strings.Split(head, "_")[0]) < 5 {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"disclosureResponseIdentification element is either undefined or empty",
-			head,
-			strings.Split(head, "_")[0])
-		return nil
-	}
-
-	// Failed to parse the input i.e. JSON response
-	if strings.Contains(body, "{some json safekeepingAccountAndHoldings}") {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"Failed to parse the json",
-			head,
-			strings.Split(head, "_")[0])
-		return nil
-	}
-
-	// Schema validation – missing element
-	if !strings.Contains(string(js), "safekeepingAccountAndHoldings") {
-		write400Upload(w,
-			[]InlineResponse4001Errors{
-				{
-					Keyword:     "required",
-					DataPath:    "/disclosureInformation/safekeepingAccountAndHoldings/0",
-					Description: "should have required property 'safekeepingAccount'",
-				},
-			},
-
-			"Response is invalid and the file is rejected. Resend the response after fixing the errors",
-			head,
-			strings.Split(head, "_")[0])
-		return nil
-	}
-
-	// New response uploaded when an existing response is still processing
-	if strings.Split(head, "_")[0] == "0000131e51cd5a265d190000b3771a9a" {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"Cannot accept new response while the request status in PROCESSING",
-			head,
-			"41e1cd345ff944a5b064f2a329e1ffa0")
-		return nil
-	}
-
-	// Invalid disclosureResponseIdentification
-	if strings.Split(head, "_")[0] == "18ba52f24cae4513584ec04b4e51a5bd" {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"Disclosure request identification not found",
-			head,
-			"41e1cd345ff944a5b064f2a329e1ffa0")
-		return nil
-	}
-
-	// disclosureType is INTERMEDIARIES and no intermediary data found in the response
-	if strings.Split(head, "_")[0] == "56d13d69d4ae7866cf68fae7e8ec2dd0" {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"No Intermediaries found in the response",
-			head,
-			"000039611a45bf75e10b0000d8f9524")
-		return nil
-	}
-
-	// disclosureType RESPONSE filed before record date
-	if strings.Contains(strings.Split(head, "_")[1], "20200407231655") {
-		write400Upload(w,
-			make([]InlineResponse4001Errors, 0),
-			"Response is rejected as it is filed before record date",
-			head,
-			"000039611a45bf75e10b0000d8f9524")
-		return nil
-	}
+	//// invalid checksum
+	//if len(js) == 0 {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"Checksum validation failure",
+	//		head,
+	//		strings.Split(head, "_")[0])
+	//	return nil
+	//}
+	//
+	//// User is not authorized to submit a response
+	//if !validXSRF(r.Header.Get("X-CSRFToken")) {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"Unauthorized to respond to this request",
+	//		head,
+	//		strings.Split(head, "_")[0])
+	//	return nil
+	//}
+	//
+	//// disclosureResponseIdentification value is either empty or undefined
+	//if len(strings.Split(head, "_")[0]) < 5 {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"disclosureResponseIdentification element is either undefined or empty",
+	//		head,
+	//		strings.Split(head, "_")[0])
+	//	return nil
+	//}
+	//
+	//// Failed to parse the input i.e. JSON response
+	//if strings.Contains(body, "{some json safekeepingAccountAndHoldings}") {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"Failed to parse the json",
+	//		head,
+	//		strings.Split(head, "_")[0])
+	//	return nil
+	//}
+	//
+	//// Schema validation – missing element
+	//if !strings.Contains(string(js), "safekeepingAccountAndHoldings") {
+	//	write400Upload(w,
+	//		[]InlineResponse4001Errors{
+	//			{
+	//				Keyword:     "required",
+	//				DataPath:    "/disclosureInformation/safekeepingAccountAndHoldings/0",
+	//				Description: "should have required property 'safekeepingAccount'",
+	//			},
+	//		},
+	//
+	//		"Response is invalid and the file is rejected. Resend the response after fixing the errors",
+	//		head,
+	//		strings.Split(head, "_")[0])
+	//	return nil
+	//}
+	//
+	//// New response uploaded when an existing response is still processing
+	//if strings.Split(head, "_")[0] == "0000131e51cd5a265d190000b3771a9a" {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"Cannot accept new response while the request status in PROCESSING",
+	//		head,
+	//		"41e1cd345ff944a5b064f2a329e1ffa0")
+	//	return nil
+	//}
+	//
+	//// Invalid disclosureResponseIdentification
+	//if strings.Split(head, "_")[0] == "18ba52f24cae4513584ec04b4e51a5bd" {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"Disclosure request identification not found",
+	//		head,
+	//		"41e1cd345ff944a5b064f2a329e1ffa0")
+	//	return nil
+	//}
+	//
+	//// disclosureType is INTERMEDIARIES and no intermediary data found in the response
+	//if strings.Split(head, "_")[0] == "56d13d69d4ae7866cf68fae7e8ec2dd0" {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"No Intermediaries found in the response",
+	//		head,
+	//		"000039611a45bf75e10b0000d8f9524")
+	//	return nil
+	//}
+	//
+	//// disclosureType RESPONSE filed before record date
+	//if strings.Contains(strings.Split(head, "_")[1], "20200407231655") {
+	//	write400Upload(w,
+	//		make([]InlineResponse4001Errors, 0),
+	//		"Response is rejected as it is filed before record date",
+	//		head,
+	//		"000039611a45bf75e10b0000d8f9524")
+	//	return nil
+	//}
 
 	inline := InlineResponse202{
 		Status:      true,

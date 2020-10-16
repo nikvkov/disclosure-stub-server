@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	log.Printf("Hello from Disclosure Hub Api Stub v1.03")
+	log.Printf("Hello from Disclosure Hub Api Stub v1.04")
 	log.Printf("Server started")
 	log.Println(`In new version added such endpoints:
 				/token
