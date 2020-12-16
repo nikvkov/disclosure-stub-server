@@ -10,7 +10,7 @@
 package main
 
 import (
-	sw "go-server-server-generated/go"
+	sw "github.com/nikvkov/disclosure-stub-server/go"
 	"log"
 	"net/http"
 )
