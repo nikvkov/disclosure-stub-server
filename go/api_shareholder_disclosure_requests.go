@@ -67,11 +67,11 @@ func write500(w http.ResponseWriter) {
 
 func write200(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	inline := InlineResponse200{Requests: make([]InlineResponse200Requests, 0)}
+	inline := new(interface{})
 	log.Println(r.Header)
 	if !strings.Contains(r.Header.Get("Pending"), "PENDING") {
 		log.Println("Open disclosure request")
-		data, err := ioutil.ReadFile("json/requests.json")
+		data, err := ioutil.ReadFile("json/uat-requests.json")
 		if err != nil {
 			log.Println(err)
 		}
