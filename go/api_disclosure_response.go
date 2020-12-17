@@ -68,35 +68,35 @@ func FileProcessingStatusPost(w http.ResponseWriter, r *http.Request) {
 
 func FileUploadTokenPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	err := verifyBearer(w, r)
-	if err != nil {
-		return
-	}
-	body, err := ioutil.ReadAll(r.Body)
-	log.Println(string(body))
-	if err != nil {
-		write500(w)
-		return
-	}
-
-	b := Body1{}
-	err = json.Unmarshal(body, &b)
-	if b.Checksum == "" {
-		write400(w, "Missing checksum value in the request")
-		return
-	}
-	if b.Checksum != "7be8db115ad78de0d8eadf0101de51dc" {
-		write400(w, "Invalid checksum")
-		return
-	}
-	if b.Filename == "" {
-		write400(w, "Missing filename value in the request")
-		return
-	}
-	if b.Filename != "000039611a45bf75e10b0000d8f95248_20200407231655.json" {
-		write400(w, "Invalid filename")
-		return
-	}
+	//err := verifyBearer(w, r)
+	//if err != nil {
+	//	return
+	//}
+	//body, err := ioutil.ReadAll(r.Body)
+	//log.Println(string(body))
+	//if err != nil {
+	//	write500(w)
+	//	return
+	//}
+	//
+	//b := Body1{}
+	//err = json.Unmarshal(body, &b)
+	//if b.Checksum == "" {
+	//	write400(w, "Missing checksum value in the request")
+	//	return
+	//}
+	//if b.Checksum != "7be8db115ad78de0d8eadf0101de51dc" {
+	//	write400(w, "Invalid checksum")
+	//	return
+	//}
+	//if b.Filename == "" {
+	//	write400(w, "Missing filename value in the request")
+	//	return
+	//}
+	//if b.Filename != "000039611a45bf75e10b0000d8f95248_20200407231655.json" {
+	//	write400(w, "Invalid filename")
+	//	return
+	//}
 
 	write201(w)
 }
