@@ -50,16 +50,20 @@ func FileProcessingStatusPost(w http.ResponseWriter, r *http.Request) {
 
 	inline := InlineResponse2001{}
 	buff := make([]byte, 0)
-	if data.DisclosureResponseIdentification == "4c582ed0eb3c01cb671000014d93738f" {
-		buff, err = ioutil.ReadFile("json/fileProcessingStatusValid.json")
-	} else if data.DisclosureResponseIdentification == "4c582ed0eb3c01cb671000014d85412g" {
-		buff, err = ioutil.ReadFile("json/fileProcessingStatusInValid.json")
-	} else {
-		write404(w)
-		return
-	}
+	buff, err = ioutil.ReadFile("json/fileProcessingStatusValid.json")
+	//if data.DisclosureResponseIdentification == "4c582ed0eb3c01cb671000014d93738f" {
+	//	buff, err = ioutil.ReadFile("json/fileProcessingStatusValid.json")
+	//} else if data.DisclosureResponseIdentification == "4c582ed0eb3c01cb671000014d85412g" {
+	//	buff, err = ioutil.ReadFile("json/fileProcessingStatusInValid.json")
+	//} else {
+	//	write404(w)
+	//	return
+	//}
 
 	json.Unmarshal(buff, &inline)
+	inline.DisclosureResponseIdentification = data.DisclosureResponseIdentification
+	inline.Result[0].FileId = data.FileId
+
 	res, _ := json.Marshal(&inline)
 	log.Println(string(res))
 	w.WriteHeader(http.StatusOK)
