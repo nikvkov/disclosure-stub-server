@@ -19,7 +19,6 @@ func main() {
 	log.Printf("Hello from Disclosure Hub Api Stub v1.04")
 	log.Printf("Server started")
 	log.Println(`In new version added such endpoints:
-				/token
 				/disclosureRequests
 				/fileUploadToken
 				/uploadDisclosureResponse
@@ -28,7 +27,7 @@ func main() {
 
 	router := sw.NewRouter()
 
-	router.HandleFunc("/token", sw.TokenPost).Methods("POST")
+	//	router.HandleFunc("/token", sw.TokenPost).Methods("POST")
 	router.HandleFunc("/disclosureRequests", sw.DisclosureRequestsPost).Methods("POST")
 	router.HandleFunc("/fileUploadToken", sw.FileUploadTokenPost).Methods("POST")
 	router.HandleFunc("/uploadDisclosureResponse", sw.UploadDisclosureResponsePost).Methods("POST")

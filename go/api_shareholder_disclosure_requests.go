@@ -11,7 +11,6 @@ package swagger
 
 import (
 	"encoding/json"
-	"github.com/nikvkov/disclosure-stub-server/token"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -20,19 +19,19 @@ import (
 
 func DisclosureRequestsPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if r.Header.Get("Authorization") == "" {
-		write500(w)
-		return
-	}
-	exist, valid := token.VerifyToken(r)
-	if !exist && !valid {
-		write401(w)
-		return
-	}
-	if exist && !valid {
-		write422(w)
-		return
-	}
+	//if r.Header.Get("Authorization") == "" {
+	//	write500(w)
+	//	return
+	//}
+	//exist, valid := token.VerifyToken(r)
+	//if !exist && !valid {
+	//	write401(w)
+	//	return
+	//}
+	//if exist && !valid {
+	//	write422(w)
+	//	return
+	//}
 
 	write200(w, r)
 }
